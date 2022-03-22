@@ -11,18 +11,19 @@
 	<table border>
 	<thead>
 	<tr>
-		<th>Id
-		<th>Name
-		<th>Title
-		<th>Salary
-		<th>Entry date
+		<th>Id</th>
+		<th>Name</th>
+		<th>Title</th>
+		<th>Salary</th>
+		<th>Entry date</th>
 	<tbody>
 		<tr th:each="employee : ${employees}">
-			<td th:text="${employee.employeeId}">Id
-			<td th:text="${employee.name}">Name
-			<td th:text="${employee.jobTitle}">Title
-			<td th:text="${employee.salary}">Salary
-			<td th:text="${employee.dateOfStartWork}">EntryDate
+			<td th:text="${employee.employeeId}">Id</td>
+			<td th:text="${employee.name}">Name</td>
+			<td th:text="${employee.jobTitle}">Title</td>
+			<td th:text="${employee.salary}">Salary</td>
+			<td th:text="${employee.dateOfStartWork}">EntryDate</td>
+		</tr>
 	</table>
 	<br><br>
 	
