@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import hu.webuni.hr.minta.dto.EmployeeDto;
+import hu.webuni.hr.minta.mapper.EmployeeMapper;
 import hu.webuni.hr.minta.model.Employee;
 import hu.webuni.hr.minta.service.EmployeeService;
 
@@ -32,15 +33,19 @@ public class EmployeeController {
 	@Autowired
 	private EmployeeService employeeService;
 	
-	private Map<Long, EmployeeDto> employees = new HashMap<>();
-	
+	@Autowired
+	EmployeeMapper employeeMapper;
+
 	
 	@GetMapping
-	public List<EmployeeDto> getAll(@RequestParam(required = false) Integer minSalary){
-		if(minSalary == null)
-			return new ArrayList<>(employees.values());
-		else
-			return employees.values().stream().filter(e -> e.getSalary() > minSalary).collect(Collectors.toList());
+	public List<EmployeeDto> getEmployees(@RequestParam(required = false) Integer minSalary) {
+		List<Employee> employees = null;
+		if(minSalary == null) {
+			employees = employeeService.findAll();
+		} else {
+			//employees = employeeRepository.findBySalaryGreaterThan(minSalary);
+		}
+		return employeeMapper.employeesToDtos(employees);
 	}
 	
 	//1. megoldás
@@ -50,37 +55,37 @@ public class EmployeeController {
 //	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<EmployeeDto> getById(@PathVariable long id) {
-		EmployeeDto employeeDto = employees.get(id);
-		if(employeeDto != null)
-			return ResponseEntity.ok(employeeDto);
-		else
-			return ResponseEntity.notFound().build();
+	public EmployeeDto getById(@PathVariable long id) {
+		Employee employee = findByIdOrThrow(id);
+		return employeeMapper.employeeToDto(employee);
 	}
+	
+	private Employee findByIdOrThrow(long id) {
+		return employeeService.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+	}
+
 	
 	@PostMapping
 	public EmployeeDto createEmployee(@RequestBody EmployeeDto employeeDto) {
-		if(employees.containsKey(employeeDto.getId()))
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-		
-		employees.put(employeeDto.getId(), employeeDto);
-		return employeeDto;
+		return employeeMapper.employeeToDto(employeeService.save(employeeMapper.dtoToEmployee(employeeDto)));
 	}
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<EmployeeDto> modifyEmployee(@PathVariable long id, @RequestBody EmployeeDto employeeDto) {
-		if(!employees.containsKey(id)) {
+		employeeDto.setId(id);
+		Employee updatedEmployee = employeeService.update(employeeMapper.dtoToEmployee(employeeDto));
+		if(updatedEmployee == null) {
 			return ResponseEntity.notFound().build();
+		} else {
+			return ResponseEntity.ok(employeeMapper.employeeToDto(updatedEmployee));
 		}
 		
-		employeeDto.setId(id);
-		employees.put(id, employeeDto);
-		return ResponseEntity.ok(employeeDto);
+
 	}
 	
 	@DeleteMapping("/{id}")
 	public void deleteEmployee(@PathVariable long id) {
-		employees.remove(id);
+		employeeService.delete(id);
 	}
 	
 	@PostMapping("/payRaise")
