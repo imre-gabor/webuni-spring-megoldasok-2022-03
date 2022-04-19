@@ -18,6 +18,8 @@ public class EmployeeDto {
 	private int salary;
 	@Past
 	private LocalDateTime entryDate;
+	
+	private CompanyDto company;
 
 	public EmployeeDto() {
 
@@ -75,6 +77,13 @@ public class EmployeeDto {
 	public String toString() {
 		return "Employee [id=" + id + ", name=" + name + ", title=" + title + ", salary=" + salary + ", entryDate="
 				+ entryDate + "]";
+	}
+public CompanyDto getCompany() {
+		return company;
+	}
+
+	public void setCompany(CompanyDto company) {
+		this.company = company;
 	}
 
 }

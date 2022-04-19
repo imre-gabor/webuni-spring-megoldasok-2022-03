@@ -24,26 +24,38 @@ import hu.webuni.hr.minta.dto.CompanyDto;
 import hu.webuni.hr.minta.dto.EmployeeDto;
 import hu.webuni.hr.minta.mapper.CompanyMapper;
 import hu.webuni.hr.minta.mapper.EmployeeMapper;
+import hu.webuni.hr.minta.model.AverageSalaryByPosition;
 import hu.webuni.hr.minta.model.Company;
+import hu.webuni.hr.minta.repository.CompanyRepository;
 import hu.webuni.hr.minta.service.CompanyService;
 
 @RestController
 @RequestMapping("/api/companies")
 public class CompanyController {
 	
-	@Autowired
-	CompanyMapper companyMapper;
-	@Autowired
-	CompanyService companyService;
+	private CompanyMapper companyMapper;
+	private CompanyService companyService;
+	private EmployeeMapper employeeMapper;
+	private CompanyRepository companyRepository;
 	
-	@Autowired
-	EmployeeMapper employeeMapper;
+
+	public CompanyController(CompanyMapper companyMapper, CompanyService companyService, EmployeeMapper employeeMapper,
+			CompanyRepository companyRepository) {
+		super();
+		this.companyMapper = companyMapper;
+		this.companyService = companyService;
+		this.employeeMapper = employeeMapper;
+		this.companyRepository = companyRepository;
+	}
 
 	// 1. megoldás
 	@GetMapping
 	public List<CompanyDto> getAll(@RequestParam(required = false) Boolean full) {
 		List<Company> companies = companyService.findAll();
-		
+		return mapCompanies(companies, full);
+	}
+
+	private List<CompanyDto> mapCompanies(List<Company> companies, Boolean full) {
 		if(isFull(full)) {
 			return companyMapper.companiesToDtos(companies);
 		} else {
@@ -140,5 +152,16 @@ public class CompanyController {
 		} catch (NoSuchElementException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
+	}
+	@GetMapping(params = "aboveEmployeeNumber")
+	public List<CompanyDto> getCompaniesAboveEmployeeNumber(@RequestParam int aboveEmployeeNumber,
+			@RequestParam(required = false) Boolean full) {
+		List<Company> filteredCompanies = companyRepository.findByEmployeeCountHigherThan(aboveEmployeeNumber);
+		return mapCompanies(filteredCompanies, full);
+	}
+	
+	@GetMapping("/{id}/salaryStats")
+	public List<AverageSalaryByPosition> getSalaryStatsById(@PathVariable long id, @RequestParam(required = false) Boolean full) {
+		return companyRepository.findAverageSalariesByPosition(id);
 	}
 }
