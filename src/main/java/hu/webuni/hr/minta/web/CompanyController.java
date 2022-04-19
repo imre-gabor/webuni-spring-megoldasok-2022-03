@@ -153,6 +153,15 @@ public class CompanyController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}
 	}
+	
+    @GetMapping(params = "aboveSalary")
+    public List<CompanyDto> getCompaniesAboveASalary(@RequestParam int aboveSalary,
+            @RequestParam(required = false) Boolean full) {
+        List<Company> allCompanies = companyRepository.findByEmployeeWithSalaryHigherThan(aboveSalary);
+        return mapCompanies(allCompanies, full);
+    }
+	
+	
 	@GetMapping(params = "aboveEmployeeNumber")
 	public List<CompanyDto> getCompaniesAboveEmployeeNumber(@RequestParam int aboveEmployeeNumber,
 			@RequestParam(required = false) Boolean full) {
