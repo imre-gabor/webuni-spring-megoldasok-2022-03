@@ -78,7 +78,8 @@ public class EmployeeDto {
 		return "Employee [id=" + id + ", name=" + name + ", title=" + title + ", salary=" + salary + ", entryDate="
 				+ entryDate + "]";
 	}
-public CompanyDto getCompany() {
+	
+	public CompanyDto getCompany() {
 		return company;
 	}
 

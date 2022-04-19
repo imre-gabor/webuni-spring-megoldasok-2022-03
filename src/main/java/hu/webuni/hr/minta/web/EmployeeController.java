@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,12 +46,20 @@ public class EmployeeController {
 
 	
 	@GetMapping
-	public List<EmployeeDto> getEmployees(@RequestParam(required = false) Integer minSalary) {
+	public List<EmployeeDto> getEmployees(@RequestParam(required = false) Integer minSalary, Pageable pageable) {
 		List<Employee> employees = null;
 		if(minSalary == null) {
 			employees = employeeService.findAll();
 		} else {
-			employees = employeeRepository.findBySalaryGreaterThan(minSalary);
+			Page<Employee> page = employeeRepository.findBySalaryGreaterThan(minSalary, pageable);
+			employees = page.getContent();
+			System.out.println(page.getTotalElements());
+			System.out.println(page.getTotalPages());
+			System.out.println(page.getSize());
+			System.out.println(page.isFirst());
+			System.out.println(page.isLast());
+			System.out.println(page.hasNext());
+			System.out.println(page.hasPrevious());
 		}
 		return employeeMapper.employeesToDtos(employees);
 	}
