@@ -56,8 +56,10 @@ public class HolidayRequestService {
 			spec = spec.and(HolidayRequestSpecifications.hasEmployeeName(employeeName));
 		if (StringUtils.hasText(approvalName))
 			spec = spec.and(HolidayRequestSpecifications.hasApprovalName(approvalName));
+		
 		if (startOfHolidayRequest != null)
 			spec = spec.and(HolidayRequestSpecifications.isEndDateGreaterThan(startOfHolidayRequest));
+		
 		if (endOfHolidayRequest != null)
 			spec = spec.and(HolidayRequestSpecifications.isStartDateLessThan(endOfHolidayRequest));
 		return holidayRequestRepository.findAll(spec, pageable);

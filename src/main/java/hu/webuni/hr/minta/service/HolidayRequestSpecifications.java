@@ -31,12 +31,12 @@ public class HolidayRequestSpecifications {
 				(approvalName + "%").toLowerCase());
 	}
 
-	public static Specification<HolidayRequest> isStartDateLessThan(LocalDate startOfHolidayRequest) {
-		return (root, cq, cb) -> cb.lessThan(root.get(HolidayRequest_.startDate), startOfHolidayRequest);
+	public static Specification<HolidayRequest> isStartDateLessThan(LocalDate date) {
+		return (root, cq, cb) -> cb.lessThan(root.get(HolidayRequest_.startDate), date);
 	}
 	
-	public static Specification<HolidayRequest> isEndDateGreaterThan(LocalDate endOfHolidayRequest) {
-		return (root, cq, cb) -> cb.greaterThan(root.get(HolidayRequest_.endDate), endOfHolidayRequest);
+	public static Specification<HolidayRequest> isEndDateGreaterThan(LocalDate date) {
+		return (root, cq, cb) -> cb.greaterThan(root.get(HolidayRequest_.endDate), date);
 	}
 
 }

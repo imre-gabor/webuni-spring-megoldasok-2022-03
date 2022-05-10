@@ -9,6 +9,7 @@ public class HolidayRequestFilterDto {
 	private String employeeName;
 	private String approverName;
 	private Boolean approved;
+	
 	private LocalDate startDate;
 	private LocalDate endDate;
 	

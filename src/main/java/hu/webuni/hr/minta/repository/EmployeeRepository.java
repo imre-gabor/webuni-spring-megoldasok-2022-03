@@ -2,6 +2,7 @@ package hu.webuni.hr.minta.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 import hu.webuni.hr.minta.model.Employee;
 
@@ -40,6 +40,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long>, JpaSp
 			+ "AND e2.salary < :minSalary"
 			+ ")")
 	void updateSalaries(String positionName, int minSalary, long companyId);
+
+	Optional<Employee> findByUsername(String username);
 	
 	
 }
