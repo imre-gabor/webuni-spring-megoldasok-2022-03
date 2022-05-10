@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -17,6 +19,8 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 import hu.webuni.hr.minta.dto.EmployeeDto;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@AutoConfigureTestDatabase
+@AutoConfigureWebTestClient(timeout = "36000")
 public class EmployeeControllerIT {
 
 	private static final String BASE_URI = "/api/employees";

@@ -20,8 +20,14 @@ public abstract class AbstractEmployeeService implements EmployeeService {
 	@Autowired
 	private EmployeeRepository employeeRepository;
 	
+	@Autowired
+	private PositionService positionService;
+	
+	
+	
 	@Override
 	public Employee save(Employee employee) {
+		positionService.setPositionForEmployee(employee);
 		return employeeRepository.save(employee);
 	}
 
@@ -29,6 +35,7 @@ public abstract class AbstractEmployeeService implements EmployeeService {
 	public Employee update(Employee employee) {
 		if(!employeeRepository.existsById(employee.getEmployeeId()))
 			return null;
+		positionService.setPositionForEmployee(employee);
 		return employeeRepository.save(employee);
 	}
 

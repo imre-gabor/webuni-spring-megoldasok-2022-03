@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import hu.webuni.hr.minta.model.Company;
 import hu.webuni.hr.minta.model.Employee;
@@ -24,6 +25,9 @@ public class CompanyService {
 	
 	@Autowired
 	private PositionRepository positionRepository;
+	
+	@Autowired
+	private PositionService positionService;
 	
 	public Company save(Company company) {
 		return companyRepository.save(company);
@@ -47,31 +51,27 @@ public class CompanyService {
 		companyRepository.deleteById(id);
 	}
 	
+	@Transactional
 	public Company addEmployee(long id, Employee employee) {
-		Company company = companyRepository.findById(id).get();
+		Company company = companyRepository.findByIdWithEmployees(id).get();
 		company.addEmployee(employee);
-		Position transientPosition = employee.getPosition();
-		if(transientPosition != null) {
-			List<Position> positionsByName = positionRepository.findByName(transientPosition.getName());
-			if(positionsByName.isEmpty())
-				throw new RuntimeException("position with this name does not exist in DB");
-			
-			Position positionInDb = positionsByName.get(0);
-			employee.setPosition(positionInDb);
-		}
+		positionService.setPositionForEmployee(employee);
+		
 		employeeRepository.save(employee);
 		return company;
 	}
 	
+	@Transactional
 	public Company deleteEmployee(long id, long employeeId) {
 		Company company = companyRepository.findById(id).get();
 		Employee employee = employeeRepository.findById(employeeId).get();
 		employee.setCompany(null);
 		company.getEmployees().remove(employee);
-		employeeRepository.save(employee);
+//		employeeRepository.save(employee); --> nem kell, mert a Transactional miatt már menedzselt entitás
 		return company;
 	}
 	
+	@Transactional
 	public Company replaceEmployees(long id, List<Employee> employees) {
 		Company company = companyRepository.findById(id).get();
 		for (Employee employee : company.getEmployees()) {
@@ -81,6 +81,7 @@ public class CompanyService {
 		
 		for (Employee employee : employees) {
 			company.addEmployee(employee);
+			positionService.setPositionForEmployee(employee);
 			Employee savedEmployee = employeeRepository.save(employee);
 			employee.setEmployeeId(savedEmployee.getEmployeeId());
 		}
