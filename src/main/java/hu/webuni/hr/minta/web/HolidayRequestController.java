@@ -74,6 +74,7 @@ public class HolidayRequestController {
 	}
 
 	@PutMapping("/{id}")
+	@PreAuthorize("#modifiedHolidayRequest.employeeId == authentication.principal.employee.employeeId")
 	public HolidayRequestDto modifyHolidayRequest(@PathVariable long id, @RequestBody @Valid HolidayRequestDto modifiedHolidayRequest) {
 		modifiedHolidayRequest.setEmployeeId(id);
 		HolidayRequest holidayRequest;
@@ -99,11 +100,11 @@ public class HolidayRequestController {
 		}
 	}
 
-	@PutMapping(value = "/{id}/approval", params = { "status", "approverId" })
-	public HolidayRequestDto approveHolidayRequest(@PathVariable long id, @RequestParam long approverId, @RequestParam boolean status) {
+	@PutMapping(value = "/{id}/approval", params = { "status"})
+	public HolidayRequestDto approveHolidayRequest(@PathVariable long id, @RequestParam boolean status) {
 		HolidayRequest holidayRequest;
 		try {
-			holidayRequest = holidayRequestService.approveHolidayRequest(id, approverId, status);
+			holidayRequest = holidayRequestService.approveHolidayRequest(id, status);
 		} catch (NoSuchElementException e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}

@@ -50,6 +50,7 @@ public class InitDbService {
 		newEmployee2.setUsername("user2");
 		newEmployee2.setPassword(passwordEncoder.encode("pass"));
 		newEmployee2.setPosition(tester);
+		newEmployee1.addManagedEmployee(newEmployee2);
 		
 		Company newCompany = companyRepository.save(new Company(null, 10, "sdfsd", "", null));
 		newCompany.addEmployee(newEmployee2);

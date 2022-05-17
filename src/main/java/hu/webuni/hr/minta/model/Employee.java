@@ -35,7 +35,11 @@ public class Employee {
 	private List<HolidayRequest> holidayRequests;
 	
 	@ManyToOne
-	private Employee manager;	
+	private Employee manager;
+	
+	@OneToMany(mappedBy = "manager")
+	private List<Employee> managedEmployees;
+	
 	public Employee() {
 	}
 
@@ -163,6 +167,19 @@ public class Employee {
 		this.password = password;
 	}
 	
+	public void addManagedEmployee(Employee emp) {
+		emp.setManager(this);
+		if(this.managedEmployees == null)
+			this.managedEmployees = new ArrayList<>();
+		this.managedEmployees.add(emp);
+	}
 
+	public List<Employee> getManagedEmployees() {
+		return managedEmployees;
+	}
+
+	public void setManagedEmployees(List<Employee> managedEmployees) {
+		this.managedEmployees = managedEmployees;
+	}
 	
 }
